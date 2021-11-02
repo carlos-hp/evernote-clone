@@ -1,6 +1,6 @@
-package co.tiagoaguiar.evernotekt
+package com.cvargas.evernoteclone
 
-import co.tiagoaguiar.evernotekt.model.Note
+import com.cvargas.evernoteclone.model.Note
 import org.junit.Assert
 import org.junit.Test
 

@@ -1,10 +1,10 @@
-package co.tiagoaguiar.evernotekt
+package com.cvargas.evernoteclone
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import co.tiagoaguiar.evernotekt.model.Note
+import com.cvargas.evernoteclone.model.Note
 import kotlinx.android.synthetic.main.list_item_note.view.*
 
 /**

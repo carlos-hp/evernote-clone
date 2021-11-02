@@ -1,4 +1,4 @@
-package co.tiagoaguiar.evernotekt
+package com.cvargas.evernoteclone
 
 import android.content.Intent
 import android.os.Bundle
@@ -10,19 +10,21 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import co.tiagoaguiar.evernotekt.model.Note
-import co.tiagoaguiar.evernotekt.model.RemoteDataSource
+import com.cvargas.evernoteclone.model.Note
+import com.cvargas.evernoteclone.model.RemoteDataSource
 import com.google.android.material.navigation.NavigationView
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.app_bar_home.*
 import kotlinx.android.synthetic.main.content_home.*
-import retrofit2.Callback
-import retrofit2.Response
 
 
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private val dataSource = RemoteDataSource()
+    private val compositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,32 +59,31 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onStart() {
         super.onStart()
-        dataSource.listNotes(callback)
+        loadNotes()
     }
 
-    private val callback: Callback<List<Note>>
-        get() = object : Callback<List<Note>> {
-
-            override fun onFailure(call: retrofit2.Call<List<Note>>, t: Throwable) {
-                t.printStackTrace()
-                displayError("Erro ao carregar notas")
-            }
-
-            override fun onResponse(
-                call: retrofit2.Call<List<Note>>,
-                response: Response<List<Note>>
-            ) {
-                if (response.isSuccessful) {
-                    val notes = response.body()
-                    notes?.let {
-                        displayNotes(it)
-                    }
+    private fun loadNotes() {
+        val disposable = dataSource.listNotes()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { notes ->
+                    displayNotes(notes)
+                },
+                { throwable ->
+                    throwable.printStackTrace()
+                    displayError("Erro ao carregar notas")
                 }
-            }
+            )
+        compositeDisposable.add(disposable)
+    }
 
-        }
+    override fun onStop() {
+        super.onStop()
+        compositeDisposable.clear()
+    }
 
-    fun displayError(message: String) {
+    private fun displayError(message: String) {
         showToast(message)
     }
 
@@ -91,15 +92,13 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun displayNotes(notes: List<Note>) {
-        // progress
-        if (notes.isNotEmpty()) {
-            home_recycler_view.adapter = NoteAdapter(notes) { note ->
-                val intent = Intent(baseContext, FormActivity::class.java)
-                intent.putExtra("noteId", note.id)
-                startActivity(intent)
-            }
-        } else {
-            // no data
+        if (notes.isNullOrEmpty())
+            return
+
+        home_recycler_view.adapter = NoteAdapter(notes) { note ->
+            val intent = Intent(baseContext, FormActivity::class.java)
+            intent.putExtra("noteId", note.id)
+            startActivity(intent)
         }
     }
 
@@ -117,9 +116,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-
-        return if (id == R.id.action_settings) {
+        return if (item.itemId == R.id.action_settings) {
             true
         } else super.onOptionsItemSelected(item)
     }

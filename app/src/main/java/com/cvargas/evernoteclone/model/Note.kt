@@ -1,4 +1,4 @@
-package co.tiagoaguiar.evernotekt.model
+package com.cvargas.evernoteclone.model
 
 import java.text.ParseException
 import java.text.SimpleDateFormat
