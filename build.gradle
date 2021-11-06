@@ -6,6 +6,7 @@ buildscript {
     ext.retrofit_rx_version = '2.9.0'
     ext.rx_java_version = '2.2.21'
     ext.rx_android_version = '2.1.1'
+    ext.dagger_2_version = '2.35.1'
     repositories {
         google()
         mavenCentral()
