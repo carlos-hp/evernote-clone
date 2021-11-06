@@ -1,9 +1,10 @@
-package com.cvargas.evernoteclone
+package com.cvargas.evernoteclone.home.presentation
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.cvargas.evernoteclone.R
 import com.cvargas.evernoteclone.model.Note
 import kotlinx.android.synthetic.main.list_item_note.view.*
 
