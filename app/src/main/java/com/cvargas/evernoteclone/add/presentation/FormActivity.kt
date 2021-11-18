@@ -62,7 +62,9 @@ class FormActivity : AppCompatActivity(), Add.View {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val toSave = if (note_editor.text.toString().isEmpty() && note_title.text.toString().isEmpty()) {
+                val toSave = if (note_editor.text.toString().isEmpty() && note_title.text.toString()
+                        .isEmpty()
+                ) {
                     toggleToolbar(R.drawable.ic_arrow_back_black_24dp)
                     false
                 } else {

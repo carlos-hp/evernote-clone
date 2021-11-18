@@ -1,7 +1,7 @@
 package com.cvargas.evernoteclone.home
 
+import com.cvargas.evernoteclone.BaseView
 import com.cvargas.evernoteclone.model.Note
-import io.reactivex.Scheduler
 
 interface Home {
 
@@ -15,7 +15,7 @@ interface Home {
         fun onClickNoteAdapter(note: Note)
     }
 
-    interface View {
+    interface View : BaseView {
         fun callFormActivity(note: Note? = null)
 
         fun displayEmptyNotes()
@@ -23,10 +23,6 @@ interface Home {
         fun displayNotes(notes: List<Note>)
 
         fun displayError(customMessage: String, exception: Throwable)
-
-        fun getBackgroundScheduler(): Scheduler?
-
-        fun getForegroundScheduler(): Scheduler?
     }
 
 }

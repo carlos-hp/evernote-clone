@@ -1,6 +1,6 @@
 package com.cvargas.evernoteclone.add
 
-import io.reactivex.Scheduler
+import com.cvargas.evernoteclone.BaseView
 
 interface Add {
     interface Presenter {
@@ -11,11 +11,9 @@ interface Add {
         fun isMustBeCreateNote(): Boolean
     }
 
-    interface View {
+    interface View : BaseView {
         fun displayNote(title: String, body: String)
         fun displayError(customMessage: String, throwable: Throwable? = null)
         fun returnToHome()
-        fun getBackgroundSchedulers(): Scheduler?
-        fun getForegroundSchedulers(): Scheduler?
     }
 }

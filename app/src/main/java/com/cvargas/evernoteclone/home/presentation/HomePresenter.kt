@@ -15,8 +15,8 @@ class HomePresenter(
 
     override fun loadNotes() {
         val disposable = dataSource.listNotes()
-            .subscribeOn(view.getBackgroundScheduler())
-            .observeOn(view.getForegroundScheduler())
+            .subscribeOn(view.getBackgroundSchedulers())
+            .observeOn(view.getForegroundSchedulers())
             .subscribe(
                 { notes ->
                     view.displayNotes(notes)
