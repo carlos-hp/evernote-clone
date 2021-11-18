@@ -48,6 +48,7 @@ class AddPresenter(
     }
 
     override fun createNote(title: String, body: String) {
+        // TODO Mudar as validações e a criação da nota para dentro do Observable
         if (title.isBlank()) {
             view.displayError("O título deve ser informado!")
             return
