@@ -99,7 +99,7 @@ class FormActivity : AppCompatActivity(), Add.View {
         note_editor.setText(body)
     }
 
-    override fun displayError(customMessage: String, throwable: Throwable?) {
+    override fun displayError(customMessage: String) {
         showToast(customMessage)
     }
 
@@ -107,9 +107,9 @@ class FormActivity : AppCompatActivity(), Add.View {
         finish()
     }
 
-    override fun getBackgroundSchedulers(): Scheduler = Schedulers.io()
+    override fun getBackgroundScheduler(): Scheduler = Schedulers.io()
 
-    override fun getForegroundSchedulers(): Scheduler = AndroidSchedulers.mainThread()
+    override fun getForegroundScheduler(): Scheduler = AndroidSchedulers.mainThread()
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId != android.R.id.home)

@@ -4,8 +4,8 @@ import com.cvargas.evernoteclone.home.Home
 import com.cvargas.evernoteclone.home.presentation.HomePresenter
 import com.cvargas.evernoteclone.model.Note
 import com.cvargas.evernoteclone.model.RemoteDataSource
+import com.cvargas.evernoteclone.rules.RxSchedulerRule
 import io.reactivex.Maybe
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.junit.Before
 import org.junit.Rule
@@ -20,6 +20,8 @@ class HomePresenterTests {
 
     @Rule
     @JvmField
+    // An instance of this class overrides the Schedulers used.
+    // Its use was not necessary, because the Schedulers were requested via the interface.
     var testSchedulerRule = RxSchedulerRule()
 
     @Mock
@@ -45,8 +47,8 @@ class HomePresenterTests {
     @Test
     fun `test must get all notes`() {
         //Give
-        Mockito.doReturn(Schedulers.io()).`when`(mockView).getBackgroundSchedulers()
-        Mockito.doReturn(AndroidSchedulers.mainThread()).`when`(mockView).getForegroundSchedulers()
+        Mockito.doReturn(Schedulers.trampoline()).`when`(mockView).getBackgroundScheduler()
+        Mockito.doReturn(Schedulers.trampoline()).`when`(mockView).getForegroundScheduler()
         Mockito.doReturn(Maybe.just(fakeAllNotes)).`when`(mockDataSource).listNotes()
 
         //When
@@ -61,8 +63,8 @@ class HomePresenterTests {
     fun `test must show empty notes`() {
         val emptyArray = arrayListOf<Note>()
         //Give
-        Mockito.doReturn(Schedulers.io()).`when`(mockView).getBackgroundSchedulers()
-        Mockito.doReturn(AndroidSchedulers.mainThread()).`when`(mockView).getForegroundSchedulers()
+        Mockito.doReturn(Schedulers.trampoline()).`when`(mockView).getBackgroundScheduler()
+        Mockito.doReturn(Schedulers.trampoline()).`when`(mockView).getForegroundScheduler()
         Mockito.doReturn(Maybe.just(emptyArray)).`when`(mockDataSource).listNotes()
 
         //When
@@ -70,8 +72,8 @@ class HomePresenterTests {
 
         //Then
         Mockito.verify(mockDataSource).listNotes()
-        Mockito.verify(mockView).getBackgroundSchedulers()
-        Mockito.verify(mockView).getForegroundSchedulers()
+        Mockito.verify(mockView).getBackgroundScheduler()
+        Mockito.verify(mockView).getForegroundScheduler()
         Mockito.verify(mockView).displayNotes(emptyArray)
     }
 }

@@ -13,7 +13,7 @@ interface Add {
 
     interface View : BaseView {
         fun displayNote(title: String, body: String)
-        fun displayError(customMessage: String, throwable: Throwable? = null)
+        fun displayError(customMessage: String)
         fun returnToHome()
     }
 }

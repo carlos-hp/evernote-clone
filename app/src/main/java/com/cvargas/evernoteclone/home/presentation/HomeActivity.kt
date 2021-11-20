@@ -115,9 +115,9 @@ class HomeActivity : AppCompatActivity(), Home.View {
         showToast(customMessage)
     }
 
-    override fun getBackgroundSchedulers(): Scheduler = Schedulers.io()
+    override fun getBackgroundScheduler(): Scheduler = Schedulers.io()
 
-    override fun getForegroundSchedulers(): Scheduler = AndroidSchedulers.mainThread()
+    override fun getForegroundScheduler(): Scheduler = AndroidSchedulers.mainThread()
 
     override fun onBackPressed() {
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
