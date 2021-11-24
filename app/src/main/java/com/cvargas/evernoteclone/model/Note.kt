@@ -17,7 +17,8 @@ data class Note(
     var date: String? = null,
     var body: String? = null
 ) {
-    @Inject constructor(): this(0)
+    @Inject
+    constructor() : this(0)
 
     val createdDate: String
         get() {
@@ -27,7 +28,8 @@ data class Note(
             return try {
                 val locale = Locale("pt", "Br")
                 val dateFormat = SimpleDateFormat("dd/MM/yyyy", locale)
-                val resultDate = SimpleDateFormat("MMM yyyy", locale).format(dateFormat.parse(date!!)!!)
+                val resultDate =
+                    SimpleDateFormat("MMM yyyy", locale).format(dateFormat.parse(date!!)!!)
                 resultDate.replaceFirstChar {
                     if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
                 }
