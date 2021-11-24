@@ -1,4 +1,4 @@
-package co.tiagoaguiar.evernotekt
+package com.cvargas.evernoteclone
 
 import org.junit.Test
 

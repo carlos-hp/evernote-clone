@@ -1,4 +1,4 @@
-package co.tiagoaguiar.evernotekt
+package com.cvargas.evernoteclone
 
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
@@ -10,12 +10,13 @@ import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import co.tiagoaguiar.evernotekt.model.Note
-import co.tiagoaguiar.evernotekt.model.RemoteDataSource
+import com.cvargas.evernoteclone.model.Note
+import com.cvargas.evernoteclone.model.RemoteDataSource
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_form.*
 import kotlinx.android.synthetic.main.content_form.*
-import retrofit2.Callback
-import retrofit2.Response
 
 /**
  *
@@ -28,6 +29,7 @@ class FormActivity : AppCompatActivity(), TextWatcher {
     private var noteId: Int? = null
 
     private val dataSource = RemoteDataSource()
+    private val compositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,8 +47,41 @@ class FormActivity : AppCompatActivity(), TextWatcher {
         }
     }
 
+    override fun onStop() {
+        super.onStop()
+        compositeDisposable.clear()
+    }
+
     private fun getNote(noteId: Int) {
-        dataSource.getNote(noteId, callback)
+        val disposable = dataSource.getNote(noteId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { note ->
+                    displayNote(note)
+                },
+                { throwable ->
+                    throwable.printStackTrace()
+                    displayError("Erro ao carregar nota")
+                }
+            )
+        compositeDisposable.add(disposable)
+    }
+
+    private fun createNote(note: Note) {
+        val disposable = dataSource.createNote(note)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                {
+                    finish()
+                },
+                { throwable ->
+                    throwable.printStackTrace()
+                    displayError("Erro ao criar nota")
+                }
+            )
+        compositeDisposable.add(disposable)
     }
 
     private fun setupViews() {
@@ -72,46 +107,6 @@ class FormActivity : AppCompatActivity(), TextWatcher {
         }
     }
 
-
-    private val callback: Callback<Note>
-        get() = object : Callback<Note> {
-
-            override fun onFailure(call: retrofit2.Call<Note>, t: Throwable) {
-                t.printStackTrace()
-                displayError("Erro ao carregar nota")
-            }
-
-            override fun onResponse(
-                call: retrofit2.Call<Note>,
-                response: Response<Note>
-            ) {
-                if (response.isSuccessful) {
-                    val note = response.body()
-                    displayNote(note)
-                }
-            }
-
-        }
-
-    private val callbackCreate: Callback<Note>
-        get() = object : Callback<Note> {
-
-            override fun onFailure(call: retrofit2.Call<Note>, t: Throwable) {
-                t.printStackTrace()
-                displayError("Erro ao criar nota")
-            }
-
-            override fun onResponse(
-                call: retrofit2.Call<Note>,
-                response: Response<Note>
-            ) {
-                if (response.isSuccessful) {
-                    finish()
-                }
-            }
-
-        }
-
     fun displayError(message: String) {
         showToast(message)
     }
@@ -121,32 +116,28 @@ class FormActivity : AppCompatActivity(), TextWatcher {
     }
 
     private fun displayNote(note: Note?) {
-        // progress
-        if (note != null) {
-            note_title.setText(note.title)
-            note_editor.setText(note.body)
-        } else {
-            // no data
-        }
+        if (note == null)
+            return
+
+        note_title.setText(note.title)
+        note_editor.setText(note.body)
     }
 
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            return if (toSave && noteId == null) {
-                val note = Note()
-                note.title = note_title.text.toString()
-                note.body = note_editor.text.toString()
+        if (item.itemId != android.R.id.home)
+            return super.onOptionsItemSelected(item)
 
-                dataSource.createNote(note, callbackCreate)
+        return if (toSave && noteId == null) {
+            val note = Note()
+            note.title = note_title.text.toString()
+            note.body = note_editor.text.toString()
 
-                true
-            } else {
-                finish()
-                true
-            }
+            createNote(note)
+            true
+        } else {
+            finish()
+            true
         }
-        return super.onOptionsItemSelected(item)
     }
 
     override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
