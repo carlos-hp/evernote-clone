@@ -1,10 +1,10 @@
 package com.cvargas.evernoteclone
 
-import com.cvargas.evernoteclone.add.Add
-import com.cvargas.evernoteclone.add.presentation.AddPresenter
+import com.cvargas.evernoteclone.view.activities.add.Add
+import com.cvargas.evernoteclone.view.activities.add.presentation.AddPresenter
 import com.cvargas.evernoteclone.base.BaseTest
-import com.cvargas.evernoteclone.model.Note
-import com.cvargas.evernoteclone.model.RemoteDataSource
+import com.cvargas.evernoteclone.data.model.Note
+import com.cvargas.evernoteclone.data.model.RemoteDataSource
 import com.cvargas.evernoteclone.rules.RxSchedulerRule
 import io.reactivex.Completable
 import io.reactivex.Single

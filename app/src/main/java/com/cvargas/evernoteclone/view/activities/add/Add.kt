@@ -1,6 +1,6 @@
-package com.cvargas.evernoteclone.add
+package com.cvargas.evernoteclone.view.activities.add
 
-import com.cvargas.evernoteclone.BaseView
+import com.cvargas.evernoteclone.view.BaseView
 
 interface Add {
     interface Presenter {

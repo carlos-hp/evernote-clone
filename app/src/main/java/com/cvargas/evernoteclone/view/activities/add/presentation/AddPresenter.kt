@@ -1,9 +1,8 @@
-package com.cvargas.evernoteclone.add.presentation
+package com.cvargas.evernoteclone.view.activities.add.presentation
 
-import android.util.Log
-import com.cvargas.evernoteclone.add.Add
-import com.cvargas.evernoteclone.model.Note
-import com.cvargas.evernoteclone.model.RemoteDataSource
+import com.cvargas.evernoteclone.view.activities.add.Add
+import com.cvargas.evernoteclone.data.model.Note
+import com.cvargas.evernoteclone.data.model.RemoteDataSource
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 

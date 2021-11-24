@@ -1,4 +1,4 @@
-package com.cvargas.evernoteclone.add.presentation
+package com.cvargas.evernoteclone.view.activities
 
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
@@ -11,8 +11,9 @@ import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.cvargas.evernoteclone.R
-import com.cvargas.evernoteclone.add.Add
-import com.cvargas.evernoteclone.model.RemoteDataSource
+import com.cvargas.evernoteclone.view.activities.add.Add
+import com.cvargas.evernoteclone.view.activities.add.presentation.AddPresenter
+import com.cvargas.evernoteclone.data.model.RemoteDataSource
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers

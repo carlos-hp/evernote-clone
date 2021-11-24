@@ -1,4 +1,4 @@
-package com.cvargas.evernoteclone.home.presentation
+package com.cvargas.evernoteclone.view.activities
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,13 +8,13 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cvargas.evernoteclone.R
-import com.cvargas.evernoteclone.add.presentation.FormActivity
-import com.cvargas.evernoteclone.home.Home
-import com.cvargas.evernoteclone.model.Note
-import com.cvargas.evernoteclone.model.RemoteDataSource
+import com.cvargas.evernoteclone.data.model.Note
+import com.cvargas.evernoteclone.view.adapters.NoteAdapter
+import com.cvargas.evernoteclone.viewmodel.HomeViewModel
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -23,21 +23,17 @@ import kotlinx.android.synthetic.main.app_bar_home.*
 import kotlinx.android.synthetic.main.content_home.*
 
 
-class HomeActivity : AppCompatActivity(), Home.View {
+class HomeActivity : AppCompatActivity() {
 
-    private lateinit var homePresenter: HomePresenter
+    private lateinit var viewModel: HomeViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-        setupPresenter()
-        setupViews()
-    }
+        viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
 
-    private fun setupPresenter() {
-        val dataSource = RemoteDataSource()
-        homePresenter = HomePresenter(view = this, dataSource)
+        setupViews()
     }
 
     private fun setupViews() {
@@ -54,7 +50,7 @@ class HomeActivity : AppCompatActivity(), Home.View {
 
     private fun setFloatingActionButtonListener() {
         fab.setOnClickListener {
-            homePresenter.onClickFabButtonListener()
+            //homePresenter.onClickFabButtonListener()
         }
     }
 
@@ -85,15 +81,24 @@ class HomeActivity : AppCompatActivity(), Home.View {
 
     override fun onStart() {
         super.onStart()
-        homePresenter.loadNotes()
+        observeAllNotes()
+    }
+
+    private fun observeAllNotes() {
+        viewModel.getAllNotes().observe(this, { noteList ->
+            if (noteList == null) {
+                displayError("Falhou")
+                return@observe
+            }
+            displayNotes(noteList)
+        })
     }
 
     override fun onStop() {
         super.onStop()
-        homePresenter.stopActivity()
     }
 
-    override fun callFormActivity(note: Note?) {
+    fun callFormActivity(note: Note?) {
         val intent = Intent(baseContext, FormActivity::class.java)
         note?.let {
             intent.putExtra("noteId", note.id)
@@ -101,23 +106,23 @@ class HomeActivity : AppCompatActivity(), Home.View {
         startActivity(intent)
     }
 
-    override fun displayEmptyNotes() {
+    fun displayEmptyNotes() {
         home_recycler_view.adapter = null
     }
 
-    override fun displayNotes(notes: List<Note>) {
+    fun displayNotes(notes: List<Note>) {
         home_recycler_view.adapter = NoteAdapter(notes) { note ->
-            homePresenter.onClickNoteAdapter(note)
+            //homePresenter.onClickNoteAdapter(note)
         }
     }
 
-    override fun displayError(customMessage: String, exception: Throwable) {
+    fun displayError(customMessage: String) {
         showToast(customMessage)
     }
 
-    override fun getBackgroundScheduler(): Scheduler = Schedulers.io()
+    fun getBackgroundScheduler(): Scheduler = Schedulers.io()
 
-    override fun getForegroundScheduler(): Scheduler = AndroidSchedulers.mainThread()
+    fun getForegroundScheduler(): Scheduler = AndroidSchedulers.mainThread()
 
     override fun onBackPressed() {
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {

@@ -1,6 +1,6 @@
 package com.cvargas.evernoteclone
 
-import com.cvargas.evernoteclone.model.Note
+import com.cvargas.evernoteclone.data.model.Note
 import org.junit.Assert
 import org.junit.Test
 

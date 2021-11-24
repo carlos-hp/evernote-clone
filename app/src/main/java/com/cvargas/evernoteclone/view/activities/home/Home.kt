@@ -1,7 +1,7 @@
-package com.cvargas.evernoteclone.home
+package com.cvargas.evernoteclone.view.activities.home
 
-import com.cvargas.evernoteclone.BaseView
-import com.cvargas.evernoteclone.model.Note
+import com.cvargas.evernoteclone.view.BaseView
+import com.cvargas.evernoteclone.data.model.Note
 
 interface Home {
 

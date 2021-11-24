@@ -1,4 +1,4 @@
-package com.cvargas.evernoteclone
+package com.cvargas.evernoteclone.view
 
 import io.reactivex.Scheduler
 

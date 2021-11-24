@@ -1,11 +1,11 @@
-package com.cvargas.evernoteclone.home.presentation
+package com.cvargas.evernoteclone.view.adapters
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.cvargas.evernoteclone.R
-import com.cvargas.evernoteclone.model.Note
+import com.cvargas.evernoteclone.data.model.Note
 import kotlinx.android.synthetic.main.list_item_note.view.*
 
 /**

@@ -1,9 +1,9 @@
 package com.cvargas.evernoteclone
 
-import com.cvargas.evernoteclone.home.Home
-import com.cvargas.evernoteclone.home.presentation.HomePresenter
-import com.cvargas.evernoteclone.model.Note
-import com.cvargas.evernoteclone.model.RemoteDataSource
+import com.cvargas.evernoteclone.view.activities.home.Home
+import com.cvargas.evernoteclone.view.activities.home.presentation.HomePresenter
+import com.cvargas.evernoteclone.data.model.Note
+import com.cvargas.evernoteclone.data.model.RemoteDataSource
 import com.cvargas.evernoteclone.rules.RxSchedulerRule
 import io.reactivex.Maybe
 import io.reactivex.schedulers.Schedulers

@@ -1,15 +1,11 @@
-package com.cvargas.evernoteclone.model
+package com.cvargas.evernoteclone.data.model
 
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
-/**
- *
- * Setembro, 24 2019
- * @author suporte@moonjava.com.br (Tiago Aguiar).
- */
+
 data class Note(
     var id: Int = 0,
     var title: String? = null,

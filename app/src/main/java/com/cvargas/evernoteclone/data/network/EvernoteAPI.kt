@@ -1,6 +1,6 @@
-package com.cvargas.evernoteclone.network
+package com.cvargas.evernoteclone.data.network
 
-import com.cvargas.evernoteclone.model.Note
+import com.cvargas.evernoteclone.data.model.Note
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Single

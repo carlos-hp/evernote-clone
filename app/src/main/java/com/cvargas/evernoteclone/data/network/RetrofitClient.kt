@@ -1,4 +1,4 @@
-package com.cvargas.evernoteclone.network
+package com.cvargas.evernoteclone.data.network
 
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory

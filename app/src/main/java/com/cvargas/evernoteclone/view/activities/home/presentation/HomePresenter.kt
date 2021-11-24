@@ -1,10 +1,10 @@
-package com.cvargas.evernoteclone.home.presentation
+package com.cvargas.evernoteclone.view.activities.home.presentation
 
 import android.util.Log
-import com.cvargas.evernoteclone.add.presentation.AddPresenter
-import com.cvargas.evernoteclone.home.Home
-import com.cvargas.evernoteclone.model.Note
-import com.cvargas.evernoteclone.model.RemoteDataSource
+import com.cvargas.evernoteclone.view.activities.add.presentation.AddPresenter
+import com.cvargas.evernoteclone.view.activities.home.Home
+import com.cvargas.evernoteclone.data.model.Note
+import com.cvargas.evernoteclone.data.model.RemoteDataSource
 import io.reactivex.disposables.CompositeDisposable
 
 class HomePresenter(
