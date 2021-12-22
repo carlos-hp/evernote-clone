@@ -3,7 +3,6 @@ package com.cvargas.evernoteclone.data.model
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
-import javax.inject.Inject
 
 
 data class Note(
@@ -13,9 +12,6 @@ data class Note(
     var date: String? = null,
     var body: String? = null
 ) {
-    @Inject
-    constructor() : this(0)
-
     val createdDate: String
         get() {
             if (this.date.isNullOrBlank())

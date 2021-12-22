@@ -10,47 +10,58 @@ import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.cvargas.evernoteclone.R
-import com.cvargas.evernoteclone.view.activities.add.Add
-import com.cvargas.evernoteclone.view.activities.add.presentation.AddPresenter
-import com.cvargas.evernoteclone.data.model.RemoteDataSource
-import io.reactivex.Scheduler
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import com.cvargas.evernoteclone.databinding.ActivityFormBinding
+import com.cvargas.evernoteclone.viewmodel.FormViewModel
 import kotlinx.android.synthetic.main.activity_form.*
 import kotlinx.android.synthetic.main.content_form.*
 
-/**
- *
- * Setembro, 24 2019
- * @author suporte@moonjava.com.br (Tiago Aguiar).
- */
-class FormActivity : AppCompatActivity(), Add.View {
 
-    private lateinit var formPresenter: AddPresenter
+class FormActivity : AppCompatActivity() {
+
+    private lateinit var viewModel: FormViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_form)
 
-        setupPresenter()
+        val binding =
+            DataBindingUtil.setContentView<ActivityFormBinding>(this, R.layout.activity_form)
+
+        viewModel = ViewModelProvider(this)[FormViewModel::class.java]
+        binding.viewModel = viewModel
+
         setupViews()
-    }
-
-    private fun setupPresenter() {
-        val noteId = intent.extras?.getInt("noteId")
-        val dataSource = RemoteDataSource()
-        formPresenter = AddPresenter(noteId = noteId, dataSource = dataSource, view = this)
     }
 
     override fun onStart() {
         super.onStart()
-        formPresenter.getNoteDetail()
+        intent.extras?.getInt("noteId")?.let { noteId ->
+            viewModel.setNoteId(noteId)
+            observeGetNote(noteId)
+        }
+        setupLiveDataObserver()
     }
 
-    override fun onStop() {
-        super.onStop()
-        formPresenter.onStopActivity()
+    private fun setupLiveDataObserver() {
+        viewModel.saved.observe(this, Observer { (saved, message) ->
+            if (saved)
+                finish()
+            else
+                displayError(message)
+        })
+    }
+
+    private fun observeGetNote(noteId: Int) {
+        viewModel.getNote(noteId).observe(this) { note ->
+            if (note == null) {
+                displayError("Falhou")
+                return@observe
+            }
+            displayNote(note.title ?: "", note.body ?: "")
+        }
     }
 
     private fun setupViews() {
@@ -73,7 +84,7 @@ class FormActivity : AppCompatActivity(), Add.View {
                     true
                 }
                 if (toSave)
-                    formPresenter.setNoteIsChanged()
+                    viewModel.setNoteIsChanged()
             }
         }
         note_title.addTextChangedListener(textWatcher)
@@ -95,32 +106,24 @@ class FormActivity : AppCompatActivity(), Add.View {
         }
     }
 
-    override fun displayNote(title: String, body: String) {
+    private fun displayNote(title: String, body: String) {
         note_title.setText(title)
         note_editor.setText(body)
     }
 
-    override fun displayError(customMessage: String) {
-        showToast(customMessage)
+    private fun displayError(message: String) {
+        showToast(message)
     }
-
-    override fun returnToHome() {
-        finish()
-    }
-
-    override fun getBackgroundScheduler(): Scheduler = Schedulers.io()
-
-    override fun getForegroundScheduler(): Scheduler = AndroidSchedulers.mainThread()
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId != android.R.id.home)
             return super.onOptionsItemSelected(item)
 
-        if (!formPresenter.isMustBeCreateNote()) {
-            returnToHome()
+        if (!viewModel.isMustBeCreateNote()) {
+            finish()
             return true
         }
-        formPresenter.createNote(note_title.text.toString(), note_editor.text.toString())
+        viewModel.createNote()
         return true
     }
 

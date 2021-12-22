@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -15,9 +16,6 @@ import com.cvargas.evernoteclone.R
 import com.cvargas.evernoteclone.data.model.Note
 import com.cvargas.evernoteclone.view.adapters.NoteAdapter
 import com.cvargas.evernoteclone.viewmodel.HomeViewModel
-import io.reactivex.Scheduler
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.app_bar_home.*
 import kotlinx.android.synthetic.main.content_home.*
@@ -44,14 +42,11 @@ class HomeActivity : AppCompatActivity() {
         setNavigationItemSelectListener()
 
         setRecycleViewLayoutManager()
-
-        setFloatingActionButtonListener()
     }
 
-    private fun setFloatingActionButtonListener() {
-        fab.setOnClickListener {
-            //homePresenter.onClickFabButtonListener()
-        }
+    fun onClickFloatingActionButton(view: View) {
+        val intent = Intent(baseContext, FormActivity::class.java)
+        startActivity(intent)
     }
 
     private fun setRecycleViewLayoutManager() {
@@ -61,7 +56,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun setNavigationItemSelectListener() {
-        nav_view.setNavigationItemSelectedListener { item ->
+        nav_view.setNavigationItemSelectedListener {
             drawer_layout.closeDrawer(GravityCompat.START)
             true
         }
@@ -94,35 +89,17 @@ class HomeActivity : AppCompatActivity() {
         })
     }
 
-    override fun onStop() {
-        super.onStop()
-    }
-
-    fun callFormActivity(note: Note?) {
-        val intent = Intent(baseContext, FormActivity::class.java)
-        note?.let {
-            intent.putExtra("noteId", note.id)
-        }
-        startActivity(intent)
-    }
-
-    fun displayEmptyNotes() {
-        home_recycler_view.adapter = null
-    }
-
-    fun displayNotes(notes: List<Note>) {
+    private fun displayNotes(notes: List<Note>) {
         home_recycler_view.adapter = NoteAdapter(notes) { note ->
-            //homePresenter.onClickNoteAdapter(note)
+            val intent = Intent(baseContext, FormActivity::class.java)
+            intent.putExtra("noteId", note.id)
+            startActivity(intent)
         }
     }
 
-    fun displayError(customMessage: String) {
-        showToast(customMessage)
+    private fun displayError(message: String) {
+        showToast(message)
     }
-
-    fun getBackgroundScheduler(): Scheduler = Schedulers.io()
-
-    fun getForegroundScheduler(): Scheduler = AndroidSchedulers.mainThread()
 
     override fun onBackPressed() {
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {

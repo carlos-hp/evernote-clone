@@ -3,14 +3,15 @@ package com.cvargas.evernoteclone.data
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.cvargas.evernoteclone.data.model.Note
-import com.cvargas.evernoteclone.data.model.RemoteDataSource
+import com.cvargas.evernoteclone.data.source.RemoteDataSource
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
-class NoteRepositoryImpl : NoteRepository {
+class NoteRepositoryImpl(
+    private val remoteDataSource: RemoteDataSource = RemoteDataSource()
+) : NoteRepository {
 
-    private val remoteDataSource = RemoteDataSource()
     private val compositeDisposable = CompositeDisposable()
 
     override fun getAllNotes(): LiveData<List<Note>?> {
@@ -43,11 +44,17 @@ class NoteRepositoryImpl : NoteRepository {
         return data
     }
 
-    override fun createNote(note: Note): Unit {
+    override fun createNote(note: Note): LiveData<Note> {
+        val data = MutableLiveData<Note>()
         val disposable = remoteDataSource.createNote(note)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe()
+            .subscribe({
+                data.postValue(note)
+            }, { throwable ->
+                throwable.printStackTrace()
+            })
         compositeDisposable.add(disposable)
+        return data
     }
 }
