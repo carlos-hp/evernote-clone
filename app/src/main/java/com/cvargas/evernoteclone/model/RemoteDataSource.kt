@@ -5,11 +5,6 @@ import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Single
 
-/**
- *
- * Setembro, 24 2019
- * @author suporte@moonjava.com.br (Tiago Aguiar).
- */
 class RemoteDataSource {
 
     fun listNotes(): Maybe<List<Note>> = RetrofitClient.evernoteApi.listNotes()

@@ -36,8 +36,7 @@ class HomeActivity : AppCompatActivity(), Home.View {
     }
 
     private fun setupPresenter() {
-        val dataSource = RemoteDataSource()
-        homePresenter = HomePresenter(view = this, dataSource)
+        homePresenter = HomePresenter(view = this, RemoteDataSource)
     }
 
     private fun setupViews() {
@@ -65,7 +64,7 @@ class HomeActivity : AppCompatActivity(), Home.View {
     }
 
     private fun setNavigationItemSelectListener() {
-        nav_view.setNavigationItemSelectedListener { item ->
+        nav_view.setNavigationItemSelectedListener {
             drawer_layout.closeDrawer(GravityCompat.START)
             true
         }

@@ -18,7 +18,12 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
+        debug {
+            buildConfigField "String", "API_URL", "\"https://myevernote.glitch.me/\""
+        }
         release {
+            buildConfigField "String", "API_URL", "\"https://myevernote.glitch.me/\""
+
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
