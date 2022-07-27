@@ -5,11 +5,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
-/**
- *
- * Setembro, 24 2019
- * @author suporte@moonjava.com.br (Tiago Aguiar).
- */
+
 data class Note(
     var id: Int = 0,
     var title: String? = null,
@@ -22,8 +18,7 @@ data class Note(
 
     val createdDate: String
         get() {
-            if (this.date.isNullOrBlank())
-                return ""
+            if (this.date.isNullOrBlank()) return ""
 
             return try {
                 val locale = Locale("pt", "Br")

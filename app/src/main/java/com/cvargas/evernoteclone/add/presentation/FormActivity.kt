@@ -19,11 +19,6 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_form.*
 import kotlinx.android.synthetic.main.content_form.*
 
-/**
- *
- * Setembro, 24 2019
- * @author suporte@moonjava.com.br (Tiago Aguiar).
- */
 class FormActivity : AppCompatActivity(), Add.View {
 
     private lateinit var formPresenter: AddPresenter
@@ -38,8 +33,7 @@ class FormActivity : AppCompatActivity(), Add.View {
 
     private fun setupPresenter() {
         val noteId = intent.extras?.getInt("noteId")
-        val dataSource = RemoteDataSource()
-        formPresenter = AddPresenter(noteId = noteId, dataSource = dataSource, view = this)
+        formPresenter = AddPresenter(noteId = noteId, dataSource = RemoteDataSource, view = this)
     }
 
     override fun onStart() {

@@ -8,11 +8,6 @@ import com.cvargas.evernoteclone.R
 import com.cvargas.evernoteclone.model.Note
 import kotlinx.android.synthetic.main.list_item_note.view.*
 
-/**
- *
- * Setembro, 24 2019
- * @author suporte@moonjava.com.br (Tiago Aguiar).
- */
 class NoteAdapter(private val notes: List<Note>, val onClickListener: (Note) -> Unit) :
     RecyclerView.Adapter<NoteAdapter.NoteView>() {
 
