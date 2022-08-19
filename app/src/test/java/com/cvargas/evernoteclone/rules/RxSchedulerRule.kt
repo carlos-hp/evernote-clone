@@ -29,7 +29,7 @@ class RxSchedulerRule : TestRule {
         }
     }
 
-    override fun apply(base: Statement?, description: Description?): Statement {
+    override fun apply(base: Statement, description: Description): Statement {
         return object : Statement() {
             override fun evaluate() {
                 RxJavaPlugins.setIoSchedulerHandler { immediate }
@@ -37,7 +37,7 @@ class RxSchedulerRule : TestRule {
                 RxJavaPlugins.setNewThreadSchedulerHandler { immediate }
                 RxAndroidPlugins.setInitMainThreadSchedulerHandler { immediate }
                 try {
-                    base?.evaluate()
+                    base.evaluate()
                 } finally {
                     RxAndroidPlugins.reset()
                     RxJavaPlugins.reset()

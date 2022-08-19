@@ -9,9 +9,9 @@ import com.cvargas.evernoteclone.data.NoteRepositoryImpl
 import com.cvargas.evernoteclone.data.model.Note
 
 class FormViewModel(private val repository: NoteRepository = NoteRepositoryImpl()) : ViewModel() {
-    private val saveLiveData = MutableLiveData<Pair<Boolean, String>>()
+    private val _saved = MutableLiveData<Pair<Boolean, String>>()
     val saved: LiveData<Pair<Boolean, String>>
-        get() = saveLiveData
+        get() = _saved
 
     var title: ObservableField<String> = ObservableField("")
     var body: ObservableField<String> = ObservableField("")
@@ -23,11 +23,11 @@ class FormViewModel(private val repository: NoteRepository = NoteRepositoryImpl(
 
     fun createNote() {
         if (title.get().isNullOrBlank()) {
-            saveLiveData.value = false to "O Titulo não pode ser em vazio!"
+            _saved.value = false to "O Titulo não pode ser em vazio!"
             return
         }
         if (body.get().isNullOrBlank()) {
-            saveLiveData.value = false to "O Corpo não pode ser em vazio!"
+            _saved.value = false to "O Corpo não pode ser em vazio!"
             return
         }
         val result = repository.createNote(
@@ -36,7 +36,7 @@ class FormViewModel(private val repository: NoteRepository = NoteRepositoryImpl(
                 body = body.get()
             )
         )
-        saveLiveData.value = true to ""
+        _saved.value = true to ""
     }
 
     fun isMustBeCreateNote(): Boolean {

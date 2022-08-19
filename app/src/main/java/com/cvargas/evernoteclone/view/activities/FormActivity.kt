@@ -11,25 +11,21 @@ import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.cvargas.evernoteclone.R
 import com.cvargas.evernoteclone.databinding.ActivityFormBinding
 import com.cvargas.evernoteclone.viewmodel.FormViewModel
-import kotlinx.android.synthetic.main.activity_form.*
-import kotlinx.android.synthetic.main.content_form.*
 
 
 class FormActivity : AppCompatActivity() {
 
     private lateinit var viewModel: FormViewModel
+    private lateinit var binding: ActivityFormBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val binding =
-            DataBindingUtil.setContentView<ActivityFormBinding>(this, R.layout.activity_form)
-
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_form)
         viewModel = ViewModelProvider(this)[FormViewModel::class.java]
         binding.viewModel = viewModel
 
@@ -46,12 +42,12 @@ class FormActivity : AppCompatActivity() {
     }
 
     private fun setupLiveDataObserver() {
-        viewModel.saved.observe(this, Observer { (saved, message) ->
+        viewModel.saved.observe(this) { (saved, message) ->
             if (saved)
                 finish()
             else
                 displayError(message)
-        })
+        }
     }
 
     private fun observeGetNote(noteId: Int) {
@@ -65,8 +61,10 @@ class FormActivity : AppCompatActivity() {
     }
 
     private fun setupViews() {
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
         toggleToolbar(R.drawable.ic_arrow_back_black_24dp)
+
+        val contentForm = binding.contentForm
 
         val textWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {}
@@ -74,7 +72,7 @@ class FormActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val toSave = if (note_editor.text.toString().isEmpty() && note_title.text.toString()
+                val toSave = if (contentForm.noteEditor.text.toString().isEmpty() && contentForm.noteTitle.text.toString()
                         .isEmpty()
                 ) {
                     toggleToolbar(R.drawable.ic_arrow_back_black_24dp)
@@ -87,8 +85,8 @@ class FormActivity : AppCompatActivity() {
                     viewModel.setNoteIsChanged()
             }
         }
-        note_title.addTextChangedListener(textWatcher)
-        note_editor.addTextChangedListener(textWatcher)
+        contentForm.noteTitle.addTextChangedListener(textWatcher)
+        contentForm.noteEditor.addTextChangedListener(textWatcher)
     }
 
     private fun toggleToolbar(@DrawableRes icon: Int) {
@@ -107,8 +105,10 @@ class FormActivity : AppCompatActivity() {
     }
 
     private fun displayNote(title: String, body: String) {
-        note_title.setText(title)
-        note_editor.setText(body)
+        binding.contentForm.apply {
+            this.noteTitle.setText(title)
+            this.noteEditor.setText(body)
+        }
     }
 
     private fun displayError(message: String) {

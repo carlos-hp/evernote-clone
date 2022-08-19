@@ -14,20 +14,19 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cvargas.evernoteclone.R
 import com.cvargas.evernoteclone.data.model.Note
+import com.cvargas.evernoteclone.databinding.ActivityHomeBinding
 import com.cvargas.evernoteclone.view.adapters.NoteAdapter
 import com.cvargas.evernoteclone.viewmodel.HomeViewModel
-import kotlinx.android.synthetic.main.activity_home.*
-import kotlinx.android.synthetic.main.app_bar_home.*
-import kotlinx.android.synthetic.main.content_home.*
-
 
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var viewModel: HomeViewModel
+    private lateinit var binding: ActivityHomeBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home)
+        binding = ActivityHomeBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
 
@@ -35,7 +34,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun setupViews() {
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.appBarHome.toolbar)
 
         setActionBarToggle()
 
@@ -50,14 +49,15 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun setRecycleViewLayoutManager() {
+        val binding = binding.appBarHome.contentHome
         val divider = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
-        home_recycler_view.addItemDecoration(divider)
-        home_recycler_view.layoutManager = LinearLayoutManager(this)
+        binding.homeRecyclerView.addItemDecoration(divider)
+        binding.homeRecyclerView.layoutManager = LinearLayoutManager(this)
     }
 
     private fun setNavigationItemSelectListener() {
-        nav_view.setNavigationItemSelectedListener {
-            drawer_layout.closeDrawer(GravityCompat.START)
+        binding.navView.setNavigationItemSelectedListener {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
     }
@@ -65,12 +65,12 @@ class HomeActivity : AppCompatActivity() {
     private fun setActionBarToggle() {
         val toggle = ActionBarDrawerToggle(
             this,
-            drawer_layout,
-            toolbar,
+            binding.drawerLayout,
+            binding.appBarHome.toolbar,
             R.string.navigation_drawer_open,
             R.string.navigation_drawer_close
         )
-        drawer_layout.addDrawerListener(toggle)
+        binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
     }
 
@@ -80,17 +80,17 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun observeAllNotes() {
-        viewModel.getAllNotes().observe(this, { noteList ->
+        viewModel.getAllNotes().observe(this) { noteList ->
             if (noteList == null) {
                 displayError("Falhou")
                 return@observe
             }
             displayNotes(noteList)
-        })
+        }
     }
 
     private fun displayNotes(notes: List<Note>) {
-        home_recycler_view.adapter = NoteAdapter(notes) { note ->
+        binding.appBarHome.contentHome.homeRecyclerView.adapter = NoteAdapter(notes) { note ->
             val intent = Intent(baseContext, FormActivity::class.java)
             intent.putExtra("noteId", note.id)
             startActivity(intent)
@@ -102,8 +102,8 @@ class HomeActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-            drawer_layout.closeDrawer(GravityCompat.START)
+        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
         } else {
             super.onBackPressed()
         }

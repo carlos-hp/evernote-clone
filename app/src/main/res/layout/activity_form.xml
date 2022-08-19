@@ -2,7 +2,8 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".view.activities.FormActivity">
+    tools:context=".view.activities.FormActivity"
+    tools:viewBindingIgnore="true">
 
     <data>
 
@@ -32,6 +33,7 @@
         </com.google.android.material.appbar.AppBarLayout>
 
         <include
+            android:id="@+id/content_form"
             layout="@layout/content_form"
             app:viewModelPass="@{viewModel}" />
 
