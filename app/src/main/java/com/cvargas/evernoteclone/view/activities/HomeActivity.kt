@@ -9,28 +9,57 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.cvargas.evernoteclone.App
+import com.cvargas.evernoteclone.Home
 import com.cvargas.evernoteclone.R
 import com.cvargas.evernoteclone.data.model.Note
 import com.cvargas.evernoteclone.databinding.ActivityHomeBinding
+import com.cvargas.evernoteclone.interactor.HomeInteractor
+import com.cvargas.evernoteclone.presenter.HomePresenter
 import com.cvargas.evernoteclone.view.adapters.NoteAdapter
-import com.cvargas.evernoteclone.viewmodel.HomeViewModel
+import com.github.terrakok.cicerone.Command
+import com.github.terrakok.cicerone.Forward
+import com.github.terrakok.cicerone.Navigator
+import com.github.terrakok.cicerone.androidx.AppNavigator
 
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : AppCompatActivity(), Home.View {
 
-    private lateinit var viewModel: HomeViewModel
+    private lateinit var presenter: Home.Presenter
     private lateinit var binding: ActivityHomeBinding
+
+    private val navigator = object : AppNavigator(this, R.id.container) {
+         override fun applyCommands(commands: Array<out Command>) {
+             for (command in commands) {
+                    if (command !is Forward) continue
+                    when (command.screen.screenKey) {
+                        FormActivity.TAG -> startActivity(
+                            Intent(this@HomeActivity, FormActivity::class.java)
+                        )
+                    }
+                }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
+        presenter = HomePresenter(this, HomeInteractor(), App.INSTANCE.router)
 
         setupViews()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        App.INSTANCE.navigatorHolder.setNavigator(navigator)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        App.INSTANCE.navigatorHolder.removeNavigator()
     }
 
     private fun setupViews() {
@@ -43,9 +72,8 @@ class HomeActivity : AppCompatActivity() {
         setRecycleViewLayoutManager()
     }
 
-    fun onClickFloatingActionButton(view: View) {
-        val intent = Intent(baseContext, FormActivity::class.java)
-        startActivity(intent)
+    fun goToAddActivity(view: View) {
+        presenter.addNoteClick()
     }
 
     private fun setRecycleViewLayoutManager() {
@@ -76,20 +104,10 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        observeAllNotes()
+        presenter.onStart()
     }
 
-    private fun observeAllNotes() {
-        viewModel.getAllNotes().observe(this) { noteList ->
-            if (noteList == null) {
-                displayError("Falhou")
-                return@observe
-            }
-            displayNotes(noteList)
-        }
-    }
-
-    private fun displayNotes(notes: List<Note>) {
+    override fun displayNotes(notes: List<Note>) {
         binding.appBarHome.contentHome.homeRecyclerView.adapter = NoteAdapter(notes) { note ->
             val intent = Intent(baseContext, FormActivity::class.java)
             intent.putExtra("noteId", note.id)
@@ -97,7 +115,7 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun displayError(message: String) {
+    override fun displayError(message: String) {
         showToast(message)
     }
 

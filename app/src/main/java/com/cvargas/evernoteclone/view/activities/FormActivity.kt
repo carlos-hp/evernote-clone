@@ -15,10 +15,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.cvargas.evernoteclone.R
 import com.cvargas.evernoteclone.databinding.ActivityFormBinding
 import com.cvargas.evernoteclone.viewmodel.FormViewModel
+import com.github.terrakok.cicerone.Screen
 
-
-class FormActivity : AppCompatActivity() {
-
+class FormActivity : AppCompatActivity(), Screen {
     private lateinit var viewModel: FormViewModel
     private lateinit var binding: ActivityFormBinding
 
@@ -129,5 +128,9 @@ class FormActivity : AppCompatActivity() {
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
+
+    companion object{
+        const val TAG: String = "FormActivity"
     }
 }
